@@ -41,8 +41,10 @@ func TestPrompt(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+			// Using tt.args.stdout is not concurrency-safe.
+			// When tests are run in parallel, each test is simultaneously trying to set tt.args.stdout to a different writer to print the results.
 
-			stdout := new(bytes.Buffer) // t.Parallel() doesn't work with tt.args.stdout
+			stdout := new(bytes.Buffer)
 			greet.Prompt(tt.args.stdin, stdout)
 			if got := stdout.String(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
