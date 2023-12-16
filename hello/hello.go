@@ -18,6 +18,6 @@ func NewPrinter() *Printer {
 	return &Printer{Output: os.Stdout}
 }
 
-func Main() {
+func DefaultPrinter() {
 	NewPrinter().Print()
 }
