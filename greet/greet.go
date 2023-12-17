@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 )
 
 func Prompt(stdin io.Reader, stdout io.Writer) {
@@ -17,4 +18,8 @@ func Prompt(stdin io.Reader, stdout io.Writer) {
 	}
 
 	fmt.Fprintf(stdout, "Hello, %v\n", name)
+}
+
+func Main() {
+	Prompt(os.Stdin, os.Stdout)
 }
