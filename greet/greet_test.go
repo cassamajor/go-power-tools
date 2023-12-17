@@ -47,9 +47,9 @@ func TestPrompt(t *testing.T) {
 			// Using tt.args.stdout is not concurrency-safe.
 			// When tests are run in parallel, each test is simultaneously trying to set tt.args.stdout to a different writer to print the results.
 
-			//stdout := new(bytes.Buffer)
-			greet.Prompt(tt.args.stdin, tt.args.stdout)
-			if got := tt.args.stdout.String(); got != tt.want {
+			stdout := new(bytes.Buffer)
+			greet.Prompt(tt.args.stdin, stdout)
+			if got := stdout.String(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
 			}
 		})
