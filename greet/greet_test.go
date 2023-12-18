@@ -50,7 +50,6 @@ func TestPrompt(t *testing.T) {
 			p := greet.NewPrompter()
 			p.Input = tt.args.stdin
 			p.Output = tt.args.stdout
-
 			p.Prompt()
 
 			if got := tt.args.stdout.String(); got != tt.want {
