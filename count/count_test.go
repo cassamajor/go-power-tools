@@ -33,10 +33,10 @@ func TestPrompt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			//t.Parallel()
 
-			p := count.NewCounter()
-			p.Input = tt.args.Input
-			p.Output = tt.args.Output
-			p.Count()
+			c := count.NewCounter()
+			c.Input = tt.args.Input
+			c.Output = tt.args.Output
+			c.Count()
 
 			if got := tt.args.Output.String(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
