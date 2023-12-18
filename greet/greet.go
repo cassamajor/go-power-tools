@@ -7,19 +7,31 @@ import (
 	"os"
 )
 
-func Prompt(stdin io.Reader, stdout io.Writer) {
+type Prompter struct {
+	Input  io.Reader
+	Output io.Writer
+}
+
+func NewPrompter() *Prompter {
+	return &Prompter{
+		Input:  os.Stdin,
+		Output: os.Stdout,
+	}
+}
+
+func (p *Prompter) Prompt() {
 	name := "Stranger"
 
-	fmt.Fprintln(stdout, "What is your name?")
-	input := bufio.NewScanner(stdin)
+	fmt.Fprintln(p.Output, "What is your name?")
+	input := bufio.NewScanner(p.Input)
 
 	if input.Scan() {
 		name = input.Text()
 	}
 
-	fmt.Fprintf(stdout, "Hello, %v\n", name)
+	fmt.Fprintf(p.Output, "Hello, %v\n", name)
 }
 
 func Main() {
-	Prompt(os.Stdin, os.Stdout)
+	NewPrompter().Prompt()
 }
