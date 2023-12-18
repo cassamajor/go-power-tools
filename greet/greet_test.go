@@ -4,19 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"github.com/cassamajor/greet"
-	"io"
 	"testing"
 	"testing/iotest"
 )
 
-type promptArgs struct {
-	stdin  io.Reader
-	stdout *bytes.Buffer
-}
-
 type promptTest struct {
 	name string
-	args promptArgs
+	args greet.Prompter
 	want string
 }
 
@@ -26,17 +20,17 @@ func TestPrompt(t *testing.T) {
 	tests := []promptTest{
 		{
 			name: "Prompts user for a name and renders greeting",
-			args: promptArgs{
-				stdin:  bytes.NewBufferString("Steven"),
-				stdout: new(bytes.Buffer),
+			args: greet.Prompter{
+				Input:  bytes.NewBufferString("Steven"),
+				Output: new(bytes.Buffer),
 			},
 			want: "What is your name?\nHello, Steven\n",
 		},
 		{
 			name: "Prints Hello, stranger on read error",
-			args: promptArgs{
-				stdin:  iotest.ErrReader(errors.New("bad reader")),
-				stdout: new(bytes.Buffer),
+			args: greet.Prompter{
+				Input:  iotest.ErrReader(errors.New("bad reader")),
+				Output: new(bytes.Buffer),
 			},
 			want: "What is your name?\nHello, Stranger\n",
 		},
@@ -48,11 +42,11 @@ func TestPrompt(t *testing.T) {
 			// When tests are run in parallel, each test is simultaneously trying to set tt.args.stdout to a different writer to print the results.
 
 			p := greet.NewPrompter()
-			p.Input = tt.args.stdin
-			p.Output = tt.args.stdout
+			p.Input = tt.args.Input
+			p.Output = tt.args.Output
 			p.Prompt()
 
-			if got := tt.args.stdout.String(); got != tt.want {
+			if got := p.Output.String(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
 			}
 		})
