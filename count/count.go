@@ -7,27 +7,28 @@ import (
 	"os"
 )
 
-type Counter struct {
+type counter struct {
 	Input  io.Reader
 	Output io.Writer
 }
 
-func NewCounter() *Counter {
-	return &Counter{
+func NewCounter() *counter {
+	return &counter{
 		Input:  os.Stdin,
 		Output: os.Stdout,
 	}
 }
 
-func (c *Counter) Count() {
+func (c *counter) Count() int {
 	lines := 0
 	input := bufio.NewScanner(c.Input)
 	for input.Scan() {
 		lines++
 	}
-	fmt.Fprintln(c.Output, lines)
+	return lines
 }
 
-func Count() {
-	NewCounter().Count()
+func DefaultCounter() {
+	c := NewCounter()
+	fmt.Fprintln(c.Output, c.Count())
 }

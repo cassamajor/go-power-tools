@@ -18,27 +18,26 @@ func TestPrompt(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
+		want int
 	}{
 		{
 			name: "Begins counter",
 			args: args{
-				Input:  bytes.NewBufferString("Steven\nCassamajor"),
+				Input:  bytes.NewBufferString("1\n2\n3\n"),
 				Output: new(bytes.Buffer),
 			},
-			want: "2\n",
+			want: 3,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 
 			c := count.NewCounter()
 			c.Input = tt.args.Input
 			c.Output = tt.args.Output
-			c.Count()
 
-			if got := tt.args.Output.String(); got != tt.want {
+			if got := c.Count(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
 			}
 		})
