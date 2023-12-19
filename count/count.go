@@ -2,26 +2,58 @@ package count
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 )
 
 type counter struct {
-	Input  io.Reader
-	Output io.Writer
+	input  io.Reader
+	output io.Writer
 }
 
-func NewCounter() *counter {
-	return &counter{
-		Input:  os.Stdin,
-		Output: os.Stdout,
+type option func(*counter) error
+
+func WithInput(r io.Reader) option {
+	return func(c *counter) error {
+		if r == nil {
+			return errors.New("nil is not a valid reader")
+		}
+		c.input = r
+		return nil
 	}
+}
+
+func WithOutput(w io.Writer) option {
+	return func(c *counter) error {
+		if w == nil {
+			return errors.New("nil is not a valid writer")
+		}
+		c.output = w
+		return nil
+	}
+}
+
+func NewCounter(opts ...option) (*counter, error) {
+	c := &counter{
+		input:  os.Stdin,
+		output: os.Stdout,
+	}
+
+	for _, opt := range opts {
+		err := opt(c)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return c, nil
 }
 
 func (c *counter) Count() int {
 	lines := 0
-	input := bufio.NewScanner(c.Input)
+	input := bufio.NewScanner(c.input)
 	for input.Scan() {
 		lines++
 	}
@@ -29,6 +61,11 @@ func (c *counter) Count() int {
 }
 
 func DefaultCounter() {
-	c := NewCounter()
-	fmt.Fprintln(c.Output, c.Count())
+	c, err := NewCounter()
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Fprintln(c.output, c.Count())
 }

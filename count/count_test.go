@@ -12,7 +12,7 @@ type args struct {
 	Output *bytes.Buffer
 }
 
-func TestPrompt(t *testing.T) {
+func TestCounter(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -21,7 +21,7 @@ func TestPrompt(t *testing.T) {
 		want int
 	}{
 		{
-			name: "Begins counter",
+			name: "Count the newlines in the provided input",
 			args: args{
 				Input:  bytes.NewBufferString("1\n2\n3\n"),
 				Output: new(bytes.Buffer),
@@ -33,9 +33,9 @@ func TestPrompt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			c := count.NewCounter()
-			c.Input = tt.args.Input
-			c.Output = tt.args.Output
+			input := count.WithInput(tt.args.Input)
+			output := count.WithOutput(tt.args.Output)
+			c, _ := count.NewCounter(input, output)
 
 			if got := c.Count(); got != tt.want {
 				t.Errorf("got = %v, want %v", got, tt.want)
