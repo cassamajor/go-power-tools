@@ -1,16 +1,7 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-)
+import "github.com/cassamajor/count"
 
 func main() {
-	lines := 0
-	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
-		lines++
-	}
-	fmt.Println(lines)
+	count.DefaultCounter()
 }
