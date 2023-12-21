@@ -9,37 +9,37 @@ import (
 	"strings"
 )
 
-type prompter struct {
-	input  io.Reader
-	output io.Writer
+type Prompter struct {
+	Input  io.Reader
+	Output io.Writer
 }
 
-type option func(*prompter) error
+type option func(*Prompter) error
 
 func WithInput(r io.Reader) option {
-	return func(p *prompter) error {
+	return func(p *Prompter) error {
 		if r == nil {
 			return errors.New("nil is not a valid reader")
 		}
-		p.input = r
+		p.Input = r
 		return nil
 	}
 }
 
 func WithOutput(w io.Writer) option {
-	return func(p *prompter) error {
+	return func(p *Prompter) error {
 		if w == nil {
 			return errors.New("nil is not a valid writer")
 		}
-		p.output = w
+		p.Output = w
 		return nil
 	}
 }
 
-func NewPrompter(option ...option) (*prompter, error) {
-	p := &prompter{
-		input:  os.Stdin,
-		output: os.Stdout,
+func NewPrompter(option ...option) (*Prompter, error) {
+	p := &Prompter{
+		Input:  os.Stdin,
+		Output: os.Stdout,
 	}
 
 	for _, opt := range option {
@@ -52,20 +52,20 @@ func NewPrompter(option ...option) (*prompter, error) {
 	return p, nil
 }
 
-func (p *prompter) Prompt() string {
+func (p *Prompter) Prompt() string {
 	name := "Stranger"
 
-	fmt.Fprintln(p.output, "What is your name?")
-	input := bufio.NewScanner(p.input)
+	fmt.Fprintln(p.Output, "What is your name?")
+	input := bufio.NewScanner(p.Input)
 
 	if input.Scan() {
 		name = input.Text()
 	}
 
-	fmt.Fprintf(p.output, "Hello, %v\n", name)
+	fmt.Fprintf(p.Output, "Hello, %v\n", name)
 
 	s := new(strings.Builder)
-	fmt.Fprint(s, p.output) // Write the content of io.Writer to the string builder.
+	fmt.Fprint(s, p.Output) // Write the content of io.Writer to the string builder.
 
 	return s.String()
 }
@@ -77,5 +77,5 @@ func DefaultPrompt() {
 		panic(err)
 	}
 
-	fmt.Fprintf(c.output, c.Prompt())
+	fmt.Fprintf(c.Output, c.Prompt())
 }
