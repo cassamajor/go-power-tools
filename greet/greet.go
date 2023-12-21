@@ -77,5 +77,5 @@ func DefaultPrompt() {
 		panic(err)
 	}
 
-	fmt.Fprintf(c.Output, c.Prompt())
+	c.Prompt()
 }

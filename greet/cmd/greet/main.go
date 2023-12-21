@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	greet.Main()
+	greet.DefaultPrompt()
 }
