@@ -18,15 +18,15 @@ func TestCounter(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want int
+		want string
 	}{
 		{
-			name: "Count the newlines in the provided input",
+			name: "Find the match in the provided input",
 			args: args{
-				Input:  bytes.NewBufferString("1\n2\n3\n"),
+				Input:  bytes.NewBufferString("hello\nworld\nhello world\n"),
 				Output: new(bytes.Buffer),
 			},
-			want: 3,
+			want: "hello\nhello world\n",
 		},
 	}
 	for _, tt := range tests {

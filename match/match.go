@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 type counter struct {
@@ -51,13 +52,19 @@ func NewCounter(opts ...option) (*counter, error) {
 	return c, nil
 }
 
-func (c *counter) Count() int {
-	lines := 0
+func (c *counter) Count() string {
 	input := bufio.NewScanner(c.input)
 	for input.Scan() {
-		lines++
+		text := input.Text()
+		if strings.Contains("hello", text) {
+			fmt.Fprintln(c.output, text)
+		}
+
 	}
-	return lines
+
+	b := new(strings.Builder)
+	fmt.Fprintln(b, c.output)
+	return b.String()
 }
 
 func DefaultCounter() {
