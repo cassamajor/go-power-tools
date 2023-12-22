@@ -28,6 +28,14 @@ func TestCounter(t *testing.T) {
 			},
 			want: "hello\nhello world\n",
 		},
+		{
+			name: "No match in the provided input",
+			args: args{
+				Input:  bytes.NewBufferString("that's crazy"),
+				Output: new(bytes.Buffer),
+			},
+			want: "\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -38,7 +46,7 @@ func TestCounter(t *testing.T) {
 			c, _ := match.NewCounter(input, output)
 
 			if got := c.Count(); got != tt.want {
-				t.Errorf("got = %v, want %v", got, tt.want)
+				t.Errorf("got = %v, want = %v", got, tt.want)
 			}
 		})
 	}
