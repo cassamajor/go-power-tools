@@ -9,37 +9,48 @@ import (
 	"strings"
 )
 
-type matcher struct {
-	input  io.Reader
-	output io.Writer
+type Matcher struct {
+	Input  io.Reader
+	Output io.Writer
+	Text   string
 }
 
-type option func(*matcher) error
+type option func(*Matcher) error
 
 func WithInput(r io.Reader) option {
-	return func(c *matcher) error {
+	return func(c *Matcher) error {
 		if r == nil {
 			return errors.New("nil is not a valid reader")
 		}
-		c.input = r
+		c.Input = r
 		return nil
 	}
 }
 
 func WithOutput(w io.Writer) option {
-	return func(c *matcher) error {
+	return func(c *Matcher) error {
 		if w == nil {
 			return errors.New("nil is not a valid writer")
 		}
-		c.output = w
+		c.Output = w
 		return nil
 	}
 }
 
-func NewMatcher(opts ...option) (*matcher, error) {
-	m := &matcher{
-		input:  os.Stdin,
-		output: os.Stdout,
+func WithText(t string) option {
+	return func(m *Matcher) error {
+		if t == "" {
+			return errors.New("text cannot be empty")
+		}
+		m.Text = t
+		return nil
+	}
+}
+
+func NewMatcher(opts ...option) (*Matcher, error) {
+	m := &Matcher{
+		Input:  os.Stdin,
+		Output: os.Stdout,
 	}
 
 	for _, opt := range opts {
@@ -52,18 +63,18 @@ func NewMatcher(opts ...option) (*matcher, error) {
 	return m, nil
 }
 
-func (m *matcher) Match() string {
-	input := bufio.NewScanner(m.input)
+func (m *Matcher) Match() string {
+	input := bufio.NewScanner(m.Input)
 	for input.Scan() {
 		text := input.Text()
-		if strings.Contains("hello", text) {
-			fmt.Fprintln(m.output, text)
+		if strings.Contains(text, m.Text) {
+			fmt.Fprintln(m.Output, text)
 		}
 
 	}
 
 	b := new(strings.Builder)
-	fmt.Fprintln(b, m.output)
+	fmt.Fprintln(b, m.Output)
 	return b.String()
 }
 
@@ -74,5 +85,5 @@ func DefaultMatcher() {
 		panic(err)
 	}
 
-	fmt.Fprintln(m.output, m.Match())
+	fmt.Fprintln(m.Output, m.Match())
 }
