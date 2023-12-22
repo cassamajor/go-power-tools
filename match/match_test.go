@@ -15,7 +15,16 @@ func TestCounter(t *testing.T) {
 		want string
 	}{
 		{
-			name: "Find the match in the provided input",
+			name: "Find a single match in the provided input",
+			args: match.Matcher{
+				Input:  bytes.NewBufferString("hello\n"),
+				Output: new(bytes.Buffer),
+				Text:   "hello",
+			},
+			want: "hello\n",
+		},
+		{
+			name: "Find multiple matches in the provided input",
 			args: match.Matcher{
 				Input:  bytes.NewBufferString("hello\nworld\nhello world\n"),
 				Output: new(bytes.Buffer),
@@ -30,7 +39,7 @@ func TestCounter(t *testing.T) {
 				Output: new(bytes.Buffer),
 				Text:   "hello",
 			},
-			want: "\n",
+			want: "",
 		},
 	}
 	for _, tt := range tests {
@@ -40,9 +49,9 @@ func TestCounter(t *testing.T) {
 			input := match.WithInput(tt.args.Input)
 			output := match.WithOutput(tt.args.Output)
 			text := match.WithText(tt.args.Text)
-			c, _ := match.NewMatcher(input, output, text)
+			m, _ := match.NewMatcher(input, output, text)
 
-			if got := c.Match(); got != tt.want {
+			if got := m.Match(); got != tt.want {
 				t.Errorf("got =\n %v, want =\n %v", got, tt.want)
 			}
 		})

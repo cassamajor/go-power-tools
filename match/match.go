@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/cassamajor/convert"
 	"io"
 	"os"
 	"strings"
@@ -73,9 +74,7 @@ func (m *Matcher) Match() string {
 
 	}
 
-	b := new(strings.Builder)
-	fmt.Fprintln(b, m.Output)
-	return b.String()
+	return convert.String(m.Output)
 }
 
 func DefaultMatcher() {
