@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-type counter struct {
+type matcher struct {
 	input  io.Reader
 	output io.Writer
 }
 
-type option func(*counter) error
+type option func(*matcher) error
 
 func WithInput(r io.Reader) option {
-	return func(c *counter) error {
+	return func(c *matcher) error {
 		if r == nil {
 			return errors.New("nil is not a valid reader")
 		}
@@ -27,7 +27,7 @@ func WithInput(r io.Reader) option {
 }
 
 func WithOutput(w io.Writer) option {
-	return func(c *counter) error {
+	return func(c *matcher) error {
 		if w == nil {
 			return errors.New("nil is not a valid writer")
 		}
@@ -36,43 +36,43 @@ func WithOutput(w io.Writer) option {
 	}
 }
 
-func NewCounter(opts ...option) (*counter, error) {
-	c := &counter{
+func NewMatcher(opts ...option) (*matcher, error) {
+	m := &matcher{
 		input:  os.Stdin,
 		output: os.Stdout,
 	}
 
 	for _, opt := range opts {
-		err := opt(c)
+		err := opt(m)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return c, nil
+	return m, nil
 }
 
-func (c *counter) Count() string {
-	input := bufio.NewScanner(c.input)
+func (m *matcher) Match() string {
+	input := bufio.NewScanner(m.input)
 	for input.Scan() {
 		text := input.Text()
 		if strings.Contains("hello", text) {
-			fmt.Fprintln(c.output, text)
+			fmt.Fprintln(m.output, text)
 		}
 
 	}
 
 	b := new(strings.Builder)
-	fmt.Fprintln(b, c.output)
+	fmt.Fprintln(b, m.output)
 	return b.String()
 }
 
-func DefaultCounter() {
-	c, err := NewCounter()
+func DefaultMatcher() {
+	m, err := NewMatcher()
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Fprintln(c.output, c.Count())
+	fmt.Fprintln(m.output, m.Match())
 }

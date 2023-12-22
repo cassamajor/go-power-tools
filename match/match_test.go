@@ -43,9 +43,9 @@ func TestCounter(t *testing.T) {
 
 			input := match.WithInput(tt.args.Input)
 			output := match.WithOutput(tt.args.Output)
-			c, _ := match.NewCounter(input, output)
+			c, _ := match.NewMatcher(input, output)
 
-			if got := c.Count(); got != tt.want {
+			if got := c.Match(); got != tt.want {
 				t.Errorf("got = %v, want = %v", got, tt.want)
 			}
 		})
