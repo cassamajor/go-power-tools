@@ -35,6 +35,19 @@ func WithOutput(w io.Writer) option {
 	}
 }
 
+func WithInputFromArgs(args []string) option {
+	return func(c *counter) error {
+		if len(args) > 0 {
+			file, err := os.Open(args[0])
+			if err != nil {
+				return err
+			}
+			c.input = file
+		}
+		return nil
+	}
+}
+
 func NewCounter(opts ...option) (*counter, error) {
 	c := &counter{
 		input:  os.Stdin,

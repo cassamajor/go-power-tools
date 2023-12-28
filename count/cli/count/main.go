@@ -1,7 +1,17 @@
 package main
 
-import "github.com/cassamajor/count"
+import (
+	"fmt"
+	"github.com/cassamajor/count"
+	"os"
+)
 
 func main() {
-	count.DefaultCounter()
+	c, err := count.NewCounter(count.WithInputFromArgs(os.Args[1:]))
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(c.Count())
 }
