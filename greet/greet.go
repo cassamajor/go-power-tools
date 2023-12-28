@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/cassamajor/convert"
 	"io"
 	"os"
-	"strings"
 )
 
 type Prompter struct {
@@ -64,10 +64,7 @@ func (p *Prompter) Prompt() string {
 
 	fmt.Fprintf(p.Output, "Hello, %v\n", name)
 
-	s := new(strings.Builder)
-	fmt.Fprint(s, p.Output) // Write the content of io.Writer to the string builder.
-
-	return s.String()
+	return convert.String(p.Output)
 }
 
 func DefaultPrompt() {
