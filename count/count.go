@@ -73,12 +73,15 @@ func (c *counter) Count() int {
 	return lines
 }
 
-func DefaultCounter() {
-	c, err := NewCounter()
+func DefaultCounter() int {
+	input := WithInputFromArgs(os.Args[1:])
+	c, err := NewCounter(input)
 
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, err)
+		return 1
 	}
 
 	fmt.Fprintln(c.output, c.Count())
+	return 0
 }
