@@ -3,9 +3,13 @@ package count_test
 import (
 	"bytes"
 	"github.com/cassamajor/count"
+	"github.com/rogpeppe/go-internal/testscript"
 	"io"
+	"os"
 	"testing"
 )
+
+type Commands map[string]func() int
 
 func TestCounter(t *testing.T) {
 	t.Parallel()
@@ -52,4 +56,17 @@ func TestCounter(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test(t *testing.T) {
+	t.Parallel()
+
+	dir := testscript.Params{Dir: "testdata/scripts"}
+	testscript.Run(t, dir)
+}
+
+func TestMain(m *testing.M) {
+	commands := Commands{"count": count.DefaultCounter}
+	status := testscript.RunMain(m, commands)
+	os.Exit(status)
 }
