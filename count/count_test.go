@@ -52,7 +52,7 @@ func TestCounter(t *testing.T) {
 			}
 
 			if got := c.Count(); got != tt.want {
-				t.Errorf("want %v, got = %v", got, tt.want)
+				t.Errorf("got %v, want = %v", got, tt.want)
 			}
 		})
 	}
