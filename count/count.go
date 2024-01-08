@@ -9,6 +9,7 @@ import (
 )
 
 type counter struct {
+	files  []io.Reader
 	input  io.Reader
 	output io.Writer
 }
@@ -37,13 +38,21 @@ func WithOutput(w io.Writer) option {
 
 func WithInputFromArgs(args []string) option {
 	return func(c *counter) error {
-		if len(args) > 0 {
-			file, err := os.Open(args[0])
+		argLength := len(args)
+
+		if argLength < 1 {
+			return nil
+		}
+
+		c.files = make([]io.Reader, argLength)
+		for index, file := range args {
+			read, err := os.Open(file)
 			if err != nil {
 				return err
 			}
-			c.input = file
+			c.files[index] = read
 		}
+		c.input = io.MultiReader(c.files...)
 		return nil
 	}
 }
@@ -70,6 +79,11 @@ func (c *counter) Count() int {
 	for input.Scan() {
 		lines++
 	}
+
+	for _, file := range c.files {
+		file.(io.Closer).Close()
+	}
+
 	return lines
 }
 

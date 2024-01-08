@@ -1,0 +1,19 @@
+exec go test
+stdin three_lines.txt
+exec go run ./cmd/count/main.go four_lines.txt additional_four_lines.txt
+stdout '8\n'
+
+-- three_lines.txt --
+this input
+contains
+three lines
+-- four_lines.txt --
+1
+2
+3
+4
+-- additional_four_lines.txt --
+5
+6
+7
+8
