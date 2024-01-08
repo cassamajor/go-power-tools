@@ -11,7 +11,20 @@ import (
 
 type Commands map[string]func() int
 
-func TestCounter(t *testing.T) {
+func Test(t *testing.T) {
+	t.Parallel()
+
+	dir := testscript.Params{Dir: "testdata/scripts"}
+	testscript.Run(t, dir)
+}
+
+func TestMain(m *testing.M) {
+	commands := Commands{"count": count.LineCounter}
+	status := testscript.RunMain(m, commands)
+	os.Exit(status)
+}
+
+func TestCounters(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -38,6 +51,24 @@ func TestCounter(t *testing.T) {
 			input: bytes.NewBufferString(""),
 			want:  0,
 		},
+		{
+			name:  "Count the newlines from a file",
+			args:  []string{"testdata/three_lines.txt"},
+			input: bytes.NewBufferString(""),
+			want:  5,
+		},
+		{
+			name:  "Count the newlines from stdin when no file is provided",
+			args:  []string{},
+			input: bytes.NewBufferString("1 one\n2 two\n3\n three"),
+			want:  6,
+		},
+		{
+			name:  "When when no file is provided, and no input is provided, there are no newlines to count",
+			args:  []string{},
+			input: bytes.NewBufferString(""),
+			want:  0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,22 +82,56 @@ func TestCounter(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if got := c.Count(); got != tt.want {
+			if got := c.CountLines(); got != tt.want {
 				t.Errorf("got %v, want = %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test(t *testing.T) {
+func TestWords(t *testing.T) {
 	t.Parallel()
 
-	dir := testscript.Params{Dir: "testdata/scripts"}
-	testscript.Run(t, dir)
-}
+	tests := []struct {
+		name  string
+		args  []string
+		input io.Reader
+		want  int
+	}{
+		{
+			name:  "Count the newlines from a file",
+			args:  []string{"testdata/three_lines.txt"},
+			input: bytes.NewBufferString(""),
+			want:  5,
+		},
+		{
+			name:  "Count the newlines from stdin when no file is provided",
+			args:  []string{},
+			input: bytes.NewBufferString("1 one\n2 two\n3\n three"),
+			want:  6,
+		},
+		{
+			name:  "When when no file is provided, and no input is provided, there are no newlines to count",
+			args:  []string{},
+			input: bytes.NewBufferString(""),
+			want:  0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			//t.Parallel()
 
-func TestMain(m *testing.M) {
-	commands := Commands{"count": count.DefaultCounter}
-	status := testscript.RunMain(m, commands)
-	os.Exit(status)
+			inputArgs := count.WithInputFromArgs(tt.args)
+			input := count.WithInput(tt.input)
+			c, err := count.NewCounter(input, inputArgs) // inputArgs is only applied when len(args) > 0
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got := c.CountWords(); got != tt.want {
+				t.Errorf("want %v, got = %v", tt.want, got)
+			}
+		})
+	}
 }

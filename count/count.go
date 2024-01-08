@@ -73,7 +73,7 @@ func NewCounter(opts ...option) (*counter, error) {
 	return c, nil
 }
 
-func (c *counter) Count() int {
+func (c *counter) CountLines() int {
 	lines := 0
 	input := bufio.NewScanner(c.input)
 	for input.Scan() {
@@ -87,7 +87,23 @@ func (c *counter) Count() int {
 	return lines
 }
 
-func DefaultCounter() int {
+func (c *counter) CountWords() int {
+	words := 0
+	input := bufio.NewScanner(c.input)
+	input.Split(bufio.ScanWords)
+
+	for input.Scan() {
+		words++
+	}
+
+	for _, file := range c.files {
+		file.(io.Closer).Close()
+	}
+
+	return words
+}
+
+func LineCounter() int {
 	input := WithInputFromArgs(os.Args[1:])
 	c, err := NewCounter(input)
 
@@ -96,6 +112,19 @@ func DefaultCounter() int {
 		return 1
 	}
 
-	fmt.Fprintln(c.output, c.Count())
+	fmt.Fprintln(c.output, c.CountLines())
+	return 0
+}
+
+func WordCounter() int {
+	input := WithInputFromArgs(os.Args[1:])
+	c, err := NewCounter(input)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Fprintln(c.output, c.CountWords())
 	return 0
 }

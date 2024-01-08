@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	os.Exit(count.DefaultCounter())
+	os.Exit(count.WordCounter())
 }
