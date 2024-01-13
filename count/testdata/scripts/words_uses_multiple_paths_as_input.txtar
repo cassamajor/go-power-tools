@@ -1,5 +1,5 @@
-exec count three_lines.txt four_lines.txt
-stdout '^7\n$'
+exec words three_lines.txt four_lines.txt
+stdout '^9\n$'
 
 -- three_lines.txt --
 this input

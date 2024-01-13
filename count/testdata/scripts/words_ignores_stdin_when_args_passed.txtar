@@ -1,0 +1,18 @@
+stdin five_words.txt
+exec words four_words.txt additional_four_words.txt
+stdout '8\n'
+
+-- five_words.txt --
+this input
+contains
+five words
+-- four_words.txt --
+1
+2
+3
+4
+-- additional_four_words.txt --
+5
+6
+7
+8

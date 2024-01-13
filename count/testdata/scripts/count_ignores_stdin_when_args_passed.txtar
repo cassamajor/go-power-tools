@@ -1,5 +1,5 @@
 stdin three_lines.txt
-exec count four_lines.txt additional_four_lines.txt
+exec lines four_lines.txt additional_four_lines.txt
 stdout '8\n'
 
 -- three_lines.txt --
