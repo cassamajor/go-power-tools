@@ -1,4 +1,4 @@
-exec lines three_lines.txt four_lines.txt
+exec count -lines three_lines.txt four_lines.txt
 stdout '^7\n$'
 
 -- three_lines.txt --

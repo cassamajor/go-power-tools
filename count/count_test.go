@@ -22,6 +22,7 @@ func TestMain(m *testing.M) {
 	commands := Commands{
 		"lines": count.LineCounter,
 		"words": count.WordCounter,
+		"count": count.DefaultCounter,
 	}
 	status := testscript.RunMain(m, commands)
 	os.Exit(status)
