@@ -3,15 +3,13 @@ package findgo
 import (
 	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 )
 
-func Files(path string) (paths []string) {
-	fsys := os.DirFS(path)
+func Files(fsys fs.FS) (paths []string) {
 	fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
-			fmt.Printf("an error encountered while walking %v: %v\n", path, err)
+			fmt.Printf("an error encountered: %v\n", err)
 		}
 
 		if filepath.Ext(p) == ".go" {
