@@ -49,3 +49,11 @@ func Test_FilesMap(t *testing.T) {
 		}
 	})
 }
+
+func Benchmark_Files(b *testing.B) {
+	fsys := os.DirFS("testdata/tree")
+	b.ResetTimer()
+	for range b.N {
+		_ = findgo.Files(fsys)
+	}
+}
