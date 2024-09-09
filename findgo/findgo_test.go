@@ -1,6 +1,7 @@
 package findgo_test
 
 import (
+	"archive/zip"
 	"github.com/cassamajor/findgo"
 	"github.com/google/go-cmp/cmp"
 	"os"
@@ -56,4 +57,28 @@ func Benchmark_Files(b *testing.B) {
 	for range b.N {
 		_ = findgo.Files(fsys)
 	}
+}
+
+func Test_ZipFiles(t *testing.T) {
+	t.Run("Test Files Correctly Opens Zip Files", func(t *testing.T) {
+		t.Parallel()
+		fsys, err := zip.OpenReader("testdata/files.zip")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		want := []string{
+			"tree/file.go",
+			"tree/subfolder/subfolder.go",
+			"tree/subfolder2/another.go",
+			"tree/subfolder2/file.go",
+		}
+
+		got := findgo.Files(fsys)
+
+		if !cmp.Equal(got, want) {
+			t.Error(cmp.Diff(want, got))
+		}
+	})
 }
