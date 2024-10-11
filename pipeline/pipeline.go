@@ -6,22 +6,37 @@ import (
 	"strings"
 )
 
+type option func(session *Pipeline)
+
 type Pipeline struct {
 	Reader io.Reader
 	Output io.Writer
 	Error  error
 }
 
-func New() *Pipeline {
-	return &Pipeline{
-		Output: os.Stdout,
+func WithString(s string) option {
+	return func(p *Pipeline) {
+		p.Reader = strings.NewReader(s)
 	}
 }
 
+func NewPipeline(opts ...option) *Pipeline {
+	c := &Pipeline{
+		Reader: os.Stdin,
+		Output: os.Stdout,
+		Error:  nil,
+	}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	return c
+}
+
 func FromString(s string) *Pipeline {
-	p := New()
-	p.Reader = strings.NewReader(s)
-	return p
+	input := WithString(s)
+	return NewPipeline(input)
 }
 
 func (p *Pipeline) Stdout() {
