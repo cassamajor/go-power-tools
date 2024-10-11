@@ -19,9 +19,9 @@ func New() *Pipeline {
 }
 
 func FromString(s string) *Pipeline {
-	return &Pipeline{
-		Reader: strings.NewReader(s),
-	}
+	p := New()
+	p.Reader = strings.NewReader(s)
+	return p
 }
 
 func (p *Pipeline) Stdout() {
