@@ -16,13 +16,15 @@ type Pipeline struct {
 }
 
 func WithString(s string) option {
-	return func(p *Pipeline) {
-		p.Input = strings.NewReader(s)
-	}
+	return WithInput(strings.NewReader(s))
 }
 
 func WithInput(r io.Reader) option {
 	return func(p *Pipeline) {
+		if r == nil {
+			p.Error = errors.New("nil is not a valid reader")
+			return
+		}
 		p.Input = r
 	}
 }
