@@ -29,6 +29,24 @@ func WithInput(r io.Reader) option {
 	}
 }
 
+func WithFile(path string) option {
+	return func(p *Pipeline) {
+		if path == "" {
+			p.Error = errors.New("path cannot be empty")
+			return
+		}
+
+		content, err := os.Open(path)
+
+		if err != nil {
+			p.Error = err
+			return
+		}
+
+		p.Input = content
+	}
+}
+
 func WithOutput(w io.Writer) option {
 	return func(p *Pipeline) {
 		if w == nil {
@@ -59,13 +77,7 @@ func FromString(s string) *Pipeline {
 }
 
 func FromFile(path string) *Pipeline {
-	content, err := os.Open(path)
-
-	if err != nil {
-		return &Pipeline{Error: err}
-	}
-
-	input := WithInput(content)
+	input := WithFile(path)
 	return NewPipeline(input)
 }
 
