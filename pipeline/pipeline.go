@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -56,6 +57,21 @@ func NewPipeline(opts ...option) *Pipeline {
 func FromString(s string) *Pipeline {
 	input := WithString(s)
 	return NewPipeline(input)
+}
+
+func FromFile(path string) *Pipeline {
+	p := NewPipeline()
+
+	content, err := os.Open(path)
+
+	if err != nil {
+		p.Error = fmt.Errorf("%w", err)
+		return p
+	}
+
+	p.Input = content
+
+	return p
 }
 
 func (p *Pipeline) Stdout() {
