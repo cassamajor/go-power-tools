@@ -30,10 +30,7 @@ func Test_Stdout(t *testing.T) {
 
 		got := convert.String(p.Output)
 
-		if !cmp.Equal(want, got) {
-			t.Error(cmp.Diff(want, got))
-			//t.Errorf("want %q, got %q", want, got)
-		}
+		assertDiff(t, want, got)
 	})
 }
 
@@ -77,9 +74,7 @@ func Test_FromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if !cmp.Equal(want, got) {
-			t.Error(cmp.Diff(want, got))
-		}
+		assertDiff(t, string(want), string(got))
 	})
 }
 
@@ -121,9 +116,7 @@ func Test_Column(t *testing.T) {
 
 		got := convert.String(p.Output)
 
-		if !cmp.Equal(string(want), got) {
-			t.Error(cmp.Diff(string(want), got))
-		}
+		assertDiff(t, string(want), got)
 	})
 }
 
@@ -139,4 +132,12 @@ func createTempFile(t *testing.T, want []byte) string {
 	}
 
 	return path
+}
+
+func assertDiff(t *testing.T, want, got string) {
+	t.Helper()
+
+	if !cmp.Equal(want, got) {
+		t.Error(cmp.Diff(want, got))
+	}
 }
