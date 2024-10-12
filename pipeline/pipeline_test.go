@@ -62,15 +62,8 @@ func Test_FromFile(t *testing.T) {
 	t.Run("Reads all data from file", func(t *testing.T) {
 		t.Parallel()
 
-		path := t.TempDir() + "hello.txt"
-		perm := os.FileMode(0o600)
 		want := []byte("Hello, world")
-
-		err := os.WriteFile(path, want, perm)
-
-		if err != nil {
-			t.Fatalf("failed to create temp file: %v", err)
-		}
+		path := createTempFile(t, want)
 
 		p := pipeline.FromFile(path)
 
@@ -101,4 +94,49 @@ func Test_FromFileErrorSafe(t *testing.T) {
 		}
 
 	})
+}
+
+func Test_Column(t *testing.T) {
+	t.Run("Appropriate column is displayed", func(t *testing.T) {
+		t.Parallel()
+
+		want := []byte("2\n2\n2\n")
+		path := createTempFile(t, want)
+
+		input := pipeline.WithFile(path)
+		output := pipeline.WithOutput(new(bytes.Buffer))
+		p := pipeline.NewPipeline(input, output)
+
+		if p.Error != nil {
+			t.Fatal(p.Error)
+		}
+
+		p = p.Column(2)
+
+		if p.Error != nil {
+			t.Fatal(p.Error)
+		}
+
+		p.Stdout()
+
+		got := convert.String(p.Output)
+
+		if !cmp.Equal(string(want), got) {
+			t.Error(cmp.Diff(string(want), got))
+		}
+	})
+}
+
+func createTempFile(t *testing.T, want []byte) string {
+	t.Helper()
+	path := t.TempDir() + "hello.txt"
+	perm := os.FileMode(0o600)
+
+	err := os.WriteFile(path, want, perm)
+
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	return path
 }

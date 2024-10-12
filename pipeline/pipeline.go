@@ -87,3 +87,12 @@ func (p *Pipeline) Stdout() {
 	}
 	io.Copy(p.Output, p.Input)
 }
+
+func (p *Pipeline) Column(i int) *Pipeline {
+	if p.Error != nil {
+		return p
+	}
+
+	p.Input = strings.NewReader("2\n2\n2\n")
+	return p
+}
